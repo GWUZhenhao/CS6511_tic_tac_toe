@@ -171,6 +171,87 @@ class Game:
 
         return (min_V, qx, qy)
 
+    def evaluation_function(self, state_board):
+        # store the number of each chain for each player
+        nums_chain_1 = np.zeros(self.target)
+        nums_chain_2 = np.zeros(self.target)
+
+        # traverse the board
+        # lateral
+        for i in range(0, self.board_size - self.target):
+            for j in range(0, self.board_size):
+                ROI = state_board[i][j:j+self.target]
+                # if this ROI only has 1
+                if np.sum(np.unique(ROI)) == 1:
+                    # Update the nums_chain_1 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 1)
+                    nums_chain_1[consecutive_number-1] += 1
+                if np.sum(np.unique(ROI)) == 2:
+                    # Update the nums_chain_2 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 2)
+                    nums_chain_2[consecutive_number - 1] += 1
+                # other condition will continue
+                else:
+                    continue
+        # vertical: just transpose the matrix, same as the lateral one
+        for i in range(0, self.board_size - self.target):
+            for j in range(0, self.board_size):
+                # transpose the matrix here
+                ROI = state_board.T[i][j:j + self.target]
+                # if this ROI only has 1
+                if np.sum(np.unique(ROI)) == 1:
+                    # Update the nums_chain_1 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 1)
+                    nums_chain_1[consecutive_number - 1] += 1
+                if np.sum(np.unique(ROI)) == 2:
+                    # Update the nums_chain_2 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 2)
+                    nums_chain_2[consecutive_number - 1] += 1
+                # other condition will continue
+                else:
+                    continue
+        # diagonal: The way to extract the ROI is different. Just pick the diagonal for the matrix
+        for i in range(self.target - self.board_size, self.board_size - self.target+1):
+            dia = state_board.diagonal(offset=i)
+            for j in range(len(dia)-self.target+1):
+                ROI = dia[j:j+self.target]
+                # if this ROI only has 1
+                if np.sum(np.unique(ROI)) == 1:
+                    # Update the nums_chain_1 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 1)
+                    nums_chain_1[consecutive_number - 1] += 1
+                if np.sum(np.unique(ROI)) == 2:
+                    # Update the nums_chain_2 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 2)
+                    nums_chain_2[consecutive_number - 1] += 1
+                # other condition will continue
+                else:
+                    continue
+        # anti-diagonal: compared to the diagonal, just horizontal flip the matrix
+        for i in range(self.target - self.board_size, self.board_size - self.target + 1):
+            dia = np.fliplr(state_board).diagonal(offset=i)
+            for j in range(len(dia) - self.target + 1):
+                ROI = dia[j:j + self.target]
+                # if this ROI only has 1
+                if np.sum(np.unique(ROI)) == 1:
+                    # Update the nums_chain_1 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 1)
+                    nums_chain_1[consecutive_number - 1] += 1
+                if np.sum(np.unique(ROI)) == 2:
+                    # Update the nums_chain_2 base on the consecutive number
+                    consecutive_number = np.sum(ROI == 2)
+                    nums_chain_2[consecutive_number - 1] += 1
+                # other condition will continue
+                else:
+                    continue
+
+
+        # Calculate the score based on the nums_chain_1 and nums_chain_2
+        score_1 = np.sum([num * pow(10, index) for index, num in enumerate(nums_chain_1)])
+        score_2 = np.sum([num * pow(10, index) for index, num in enumerate(nums_chain_2)])
+
+        return score_1 - score_2
+
     def play_alpha_beta(self):
         while True:
             self.result = self.is_end()
