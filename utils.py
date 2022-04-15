@@ -178,8 +178,8 @@ class Game:
 
         # traverse the board
         # lateral
-        for i in range(0, self.board_size - self.target):
-            for j in range(0, self.board_size):
+        for i in range(0, self.board_size):
+            for j in range(0, self.board_size - self.target):
                 ROI = state_board[i][j:j+self.target]
                 # if this ROI only has 1
                 if np.sum(np.unique(ROI)) == 1:
