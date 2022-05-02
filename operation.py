@@ -1,5 +1,6 @@
 import requests
 import json
+import numpy as np
 
 class operation:
     def __init__(self, teamId):
@@ -61,7 +62,26 @@ class operation:
 
         response = requests.request("GET", url, headers=self.headers, data=payload, files=self.files)
         dict_response = json.loads(response.text)
-        return dict_response
+
+        moveIds = []
+        teamIds = []
+        symbols = []
+        moveXs = []
+        moveYs = []
+        for i in range(len(dict_response['moves'])):
+            moveIds.append(dict_response['moves'][i]['moveId'])
+            teamIds.append(dict_response['moves'][i]['teamId'])
+            symbols.append(dict_response['moves'][i]['symbol'])
+            moveXs.append(dict_response['moves'][i]['moveX'])
+            moveYs.append(dict_response['moves'][i]['moveY'])
+
+        moveIds = np.asarray(moveIds)
+        teamIds = np.asarray(teamIds)
+        symbols = np.asarray(symbols)
+        moveXs = np.asarray(moveXs)
+        moveYs = np.asarray(moveYs)
+
+        return moveIds, teamIds, symbols, moveXs, moveYs
 
     def get_board_string(self, gameId):
         url = 'https://www.notexponential.com/aip2pgaming/api/index.php?type=boardString&gameId={}'.format(gameId)
@@ -77,4 +97,19 @@ class operation:
 
         response = requests.request("GET", url, headers=self.headers, data=payload, files=self.files)
         dict_response = json.loads(response.text)
-        return dict_response
+
+        output = dict_response['output'].split('"')
+        print(output)
+        keys = []
+        values = []
+        for i in range(int((len(output) - 1) / 4)):
+            keys.append(output[i * 4 + 1])
+            if output[i * 4 + 3] == 'O':
+                values.append(1)
+            else:
+                values.append(2)
+
+        keys = np.asarray(keys)
+        values = np.asarray(values)
+
+        return keys, values
