@@ -63,7 +63,7 @@ class operation:
         response = requests.request("GET", url, headers=self.headers, data=payload, files=self.files)
         dict_response = json.loads(response.text)
 
-                if dict_response.__contains__('moves'):
+        if dict_response.__contains__('moves'):
             moveIds = []
             teamIds = []
             symbols = []
