@@ -18,6 +18,8 @@ class TTT_run():
             self.game.current_state[point[0]][point[1]] = value[i]
 
     def get_turn(self):  # determine whether my turn to move
+        if self.op.get_moves(self.gameId, '2'):
+            return True
         moveIds, teamIds, symbols, moveXs, moveYs = self.op.get_moves(self.gameId, '2')
         if teamIds[0] == self.teamId:
             return False
