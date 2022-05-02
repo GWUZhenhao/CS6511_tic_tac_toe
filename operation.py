@@ -101,10 +101,15 @@ class operation:
         response = requests.request("GET", url, headers=self.headers, data=payload, files=self.files)
         dict_response = json.loads(response.text)
 
+        loc = []
+        values = []
+        if dict_response['output'] == None:
+            return loc, values
+
         output = dict_response['output'].split('"')
-        #print(output)
-        keys = [] # loaction [x,y]
-        values = [] # 1 or 2 or 0
+
+        keys = []
+
         for i in range(int((len(output) - 1) / 4)):
             keys.append(output[i * 4 + 1])
             if output[i * 4 + 3] == 'O':
@@ -112,7 +117,7 @@ class operation:
             else:
                 values.append(2)
 
-        loc = []
+
         for i in range(len(keys)):
             loc.append(keys[i].split(','))
             loc[i][0] = int(loc[i][0])
