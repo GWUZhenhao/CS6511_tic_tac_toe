@@ -80,7 +80,42 @@ class Game:
 
     # Checks if the game has ended and returns the winner in each case
     def is_end(self):
-        # TODO: Check the game is end or not.
+        # Vertical win
+        for i in range(self.board_size):
+            for j in range(self.board_size - self.target + 1):
+                for k in range(self.target - 2):
+                    if (self.current_state[j + k][i] == 0 or self.current_state[j + k][i] != self.current_state[j + k + 1][i]):
+                        break
+                    elif k == (self.target - 2):
+                        return self.current_state[j][i]
+
+        # Horizontal win
+        for i in range(self.board_size):
+            for j in range(self.board_size - self.target + 1):
+                for k in range(self.target - 2):
+                    if (self.current_state[i][j + k] == 0 or self.current_state[i][j + k] != self.current_state[i][j + k + 1]):
+                        break
+                    elif k == (j + self.target - 2):
+                        return self.current_state[i][j]
+
+        # Main diagonal win
+        for i in range(self.board_size - self.target + 1):
+            for j in range(self.board_size - self.target + 1):
+                for k in range(self.target - 2):
+                    if (self.current_state[i + k][j + k] == 0 or self.current_state[i + k][j + k] != self.current_state[i + k + 1][j + k + 1]):
+                        break
+                    elif k == (self.target - 2):
+                        return self.current_state[i][j]
+
+        # Second diagonal win
+        for i in range(self.board_size - self.target + 1):
+            for j in range(self.target - 1, self.board_size):
+                for k in range(self.target - 2):
+                    if (self.current_state[i + k][j -k] == 0 or self.current_state[i + k][j - k] != self.current_state[i + k + 1][j - k - 1]):
+                        break
+                    elif k == (self.target - 2):
+                        return self.current_state[i][j]
+
         # if the game is not end, return None
         return None
 
