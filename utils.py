@@ -177,7 +177,7 @@ class Game:
         nums_chain_2 = np.zeros(self.target)
 
         # traverse the board
-        # lateral
+        # lateral row
         for i in range(0, self.board_size):
             for j in range(0, self.board_size - self.target):
                 ROI = state_board[i][j:j+self.target]
