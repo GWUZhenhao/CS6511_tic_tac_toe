@@ -100,8 +100,8 @@ class operation:
 
         output = dict_response['output'].split('"')
         print(output)
-        keys = []
-        values = []
+        keys = [] # loaction [x,y]
+        values = [] # 1 or 2 or 0
         for i in range(int((len(output) - 1) / 4)):
             keys.append(output[i * 4 + 1])
             if output[i * 4 + 3] == 'O':

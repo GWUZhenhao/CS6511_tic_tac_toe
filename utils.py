@@ -279,11 +279,12 @@ class Game:
                 # TODO: The player 1 will play
                 (m, qx, qy) = self.min_alpha_beta(-11, 11, 0, 5)
                 print('Recommended move: X = {}, Y = {}'.format(qx, qy))
-
+                return qx,qy
                 self.player_turn = 2
 
             else:
                 (m, px, py) = self.max_alpha_beta(-11, 11, 0, 5)
+                return
                 self.current_state[px][py] = 2
                 self.player_turn = 1
 
