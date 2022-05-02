@@ -12,6 +12,9 @@ class TTT_run():
         self.gameId = 0  #  gameid 3657 zhenhao tianheng2
         self.teamId = 0  #  zhenhao  tianheng2 1336
         self.op = 0
+        self.board_size = board_size
+        self.target = target
+        
     def get_state_board(self): # use board map to get state in narray
         key, value = self.op.get_board_map(self.gameId)
         for i, point in enumerate(key):
