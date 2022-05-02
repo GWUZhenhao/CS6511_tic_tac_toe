@@ -109,7 +109,14 @@ class operation:
             else:
                 values.append(2)
 
-        keys = np.asarray(keys)
-        values = np.asarray(values)
+        loc = []
+        for i in range(len(keys)):
+            loc.append(keys[i].split(','))
+            loc[i][0] = int(loc[i][0])
+            loc[i][1] = int(loc[i][1])
 
-        return keys, values
+        values = np.asarray(values)
+        loc = np.asarray(loc)
+
+
+        return loc, values
