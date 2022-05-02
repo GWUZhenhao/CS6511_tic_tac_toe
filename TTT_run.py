@@ -54,15 +54,16 @@ class TTT_run():
         # assert False
 
 run = TTT_run()
-run.teamId = '1336'
+run.teamId = '1304'  #1304
 run.gameId = '3657'
-run.op = op.operation("1336")
+run.op = op.operation("1304")
 while True:
     if run.get_turn():
+        run.get_state_board()
         x,y = run.make_decision()
         result=run.make_a_move(x,y)
         print("result",result)
-        time.sleep(10)
+        time.sleep(1)
     else:
         print("it is not team turn")
-        time.sleep(10)
+        time.sleep(1)

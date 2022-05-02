@@ -194,22 +194,27 @@ class Game:
                     explore_layer += 1
                     if explore_layer >= max_explore_layer:
                         m = self.evaluation_function(self.current_state)
+                        # print("m of evalu func", m)
                     else:
                         (m, min_i, in_j) = self.max_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
+                        # print("m of max:",m)
                     if m < min_V:
                         min_V = m
                         qx = i
                         qy = j
+                        # print("m<minv:m ,i,j", m,i,j)
 
                     # Setting back the field to empty
                     self.current_state[i][j] = 0
 
                     # if min_V is smaller than current alpha, we can prune. (No need check more children node)
                     if min_V <= alpha:
+                        # print("m<=alpha")
                         return (min_V, qx, qy)
 
                     # if min_V is smaller than current beta, update the beta value
                     if min_V < beta:
+                        # print("minv<=beta",min_V)
                         beta = min_V
 
         return (min_V, qx, qy)
