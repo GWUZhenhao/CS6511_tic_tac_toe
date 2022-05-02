@@ -99,7 +99,7 @@ class operation:
         dict_response = json.loads(response.text)
 
         output = dict_response['output'].split('"')
-        print(output)
+        #print(output)
         keys = [] # loaction [x,y]
         values = [] # 1 or 2 or 0
         for i in range(int((len(output) - 1) / 4)):
