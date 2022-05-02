@@ -11,25 +11,28 @@ class TTT_run():
         self.game = ut.Game(board_size, target)
         self.gameId = 0  #  gameid 3657 zhenhao tianheng2
         self.teamId = 0  #  zhenhao  tianheng2 1336
+        self.op = 0
     def get_state_board(self): # use board map to get state in narray
-        key, value = op.get_board_map(self.gameId)
+        key, value = self.op.get_board_map(self.gameId)
         for i, point in enumerate(key):
             self.game.current_state[point[0]][point[1]] = value[i]
 
     def get_turn(self):  # determine whether my turn to move
-        moveIds, teamIds, symbols, moveXs, moveYs = op.get_moves(self.gameId, 1)
-        if teamIds[-1] == self.teamId:
+        moveIds, teamIds, symbols, moveXs, moveYs = self.op.get_moves(self.gameId, '2')
+        if teamIds[0] == self.teamId:
             return False
         else:
             return True
 
     def make_decision(self): #find best move in current state
+        self.game.player_turn = 1
         x,y = self.game.play_alpha_beta()
         return x,y
 
     def make_a_move(self,x,y):
-        result = op.make_a_move(self.gameId,f"{x},{y}")
+        result = self.op.make_a_move(self.gameId,f"{x},{y}")
         return result
+
 
 
     # def test_evaluation_function(self):
@@ -50,3 +53,16 @@ class TTT_run():
     #     return score
         # assert False
 
+run = TTT_run()
+run.teamId = '1336'
+run.gameId = '3657'
+run.op = op.operation("1336")
+while True:
+    if run.get_turn():
+        x,y = run.make_decision()
+        result=run.make_a_move(x,y)
+        print("result",result)
+        time.sleep(10)
+    else:
+        print("it is not team turn")
+        time.sleep(10)
