@@ -99,7 +99,7 @@ class operation:
         dict_response = json.loads(response.text)
 
         output = dict_response['output'].split('"')
-        print(output)
+
         keys = []
         values = []
         for i in range(int((len(output) - 1) / 4)):
