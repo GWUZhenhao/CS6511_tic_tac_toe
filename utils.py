@@ -84,7 +84,7 @@ class Game:
         # if the game is not end, return None
         return None
 
-    def max_alpha_beta(self, alpha, beta):
+    def max_alpha_beta(self, alpha, beta, explore_layer, max_explore_layer):
         # Possible values for maxv are:
         # -10 - loss
         # 0  - a tie
@@ -110,7 +110,11 @@ class Game:
                     # On the empty field player 2 makes a move and calls Min
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 2
-                    (m, min_i, in_j) = self.min_alpha_beta(alpha, beta)
+                    explore_layer += 1
+                    if explore_layer >= max_explore_layer:
+                        m = self.evaluation_function(self.current_state)
+                    else:
+                        (m, min_i, in_j) = self.min_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
                     if m > max_V:
                         max_V = m
                         px = i
@@ -129,7 +133,7 @@ class Game:
 
         return (max_V, px, py)
 
-    def min_alpha_beta(self, alpha, beta):
+    def min_alpha_beta(self, alpha, beta, explore_layer,max_explore_layer):
 
         # Initialize min_V as 11 better than the better case
         min_V = 11
@@ -152,7 +156,11 @@ class Game:
                     # On the empty field player 1 makes a move and calls Max
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 1
-                    (m, max_i, max_j) = self.max_alpha_beta(alpha, beta)
+                    explore_layer += 1
+                    if explore_layer >= max_explore_layer:
+                        m = self.evaluation_function(self.current_state)
+                    else:
+                        (m, min_i, in_j) = self.max_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
                     if m < min_V:
                         min_V = m
                         qx = i
@@ -249,8 +257,9 @@ class Game:
         # Calculate the score based on the nums_chain_1 and nums_chain_2
         score_1 = np.sum([num * pow(10, index) for index, num in enumerate(nums_chain_1)])
         score_2 = np.sum([num * pow(10, index) for index, num in enumerate(nums_chain_2)])
-
-        return score_1 - score_2
+        #
+        final_score = (score_1 - score_2)/(score_1 + score_2) *10
+        return final_score
 
     def play_alpha_beta(self):
         while True:
@@ -268,13 +277,13 @@ class Game:
 
             if self.player_turn == 1:
                 # TODO: The player 1 will play
-                (m, qx, qy) = self.min_alpha_beta(-11, 11)
+                (m, qx, qy) = self.min_alpha_beta(-11, 11, 0, 5)
                 print('Recommended move: X = {}, Y = {}'.format(qx, qy))
 
                 self.player_turn = 2
 
             else:
-                (m, px, py) = self.max_alpha_beta(-11, 11)
+                (m, px, py) = self.max_alpha_beta(-11, 11, 0, 5)
                 self.current_state[px][py] = 2
                 self.player_turn = 1
 
