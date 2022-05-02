@@ -17,9 +17,13 @@ class TTT_run():
         for i, point in enumerate(key):
             self.game.current_state[point[0]][point[1]] = value[i]
 
+    def first_step(self):
+        self.make_a_move(int(self.board_size/2),int(self.board_size/2))
+
     def get_turn(self):  # determine whether my turn to move
         if not self.op.get_moves(self.gameId, '2'):
-            return True
+            self.first_step()
+            return False
         moveIds, teamIds, symbols, moveXs, moveYs = self.op.get_moves(self.gameId, '2')
         if teamIds[0] == self.teamId:
             return False
