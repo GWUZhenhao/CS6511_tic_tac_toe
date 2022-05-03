@@ -69,6 +69,17 @@ class Game:
         self.player_turn = 1
         self.target = target
 
+    def neighbor(self, board, x, y, r):
+        start_x, end_x = (x - r), (x + r)
+        start_y, end_y = (y - r), (y + r)
+
+        for i in range(start_y, end_y + 1):
+            for j in range(start_x, end_x + 1):
+                if i >= 0 and i < self.board_size and j >= 0 and j < self.board_size:
+                    if board[i][j] != 0:
+                        return True
+        return False
+
     def draw_board(self):
         print(self.current_state)
 
@@ -141,7 +152,7 @@ class Game:
 
         for i in range(self.board_size):
             for j in range(self.board_size):
-                if self.current_state[i][j] == 0:
+                if self.current_state[i][j] == 0 and self.neighbor(self.current_state,i,j,1):
                     # On the empty field player 2 makes a move and calls Min
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 2
@@ -187,7 +198,7 @@ class Game:
 
         for i in range(self.board_size):
             for j in range(self.board_size):
-                if self.current_state[i][j] == 0:
+                if self.current_state[i][j] == 0 and self.neighbor(self.current_state,i,j,1):
                     # On the empty field player 1 makes a move and calls Max
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 1

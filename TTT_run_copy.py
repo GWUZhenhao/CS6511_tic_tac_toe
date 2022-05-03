@@ -66,9 +66,9 @@ class TTT_run():
         # assert False
 #
 run = TTT_run()
-run.teamId = '1304'  #1304
+run.teamId = '1336'  #1304
 run.gameId = '3664'
-run.op = op.operation("1304")
+run.op = op.operation("1336")
 while True:
     if run.get_turn():
         st = time.time()
@@ -77,7 +77,7 @@ while True:
         x,y = run.make_decision()
         result=run.make_a_move(x,y)
         print("result",result)
-        print('The calculate time is {}'.format(time.time() - st))
+        print('\n\nThe calculate time is {}'.format(time.time() - st))
         print(run.game.current_state)
         time.sleep(1)
     else:

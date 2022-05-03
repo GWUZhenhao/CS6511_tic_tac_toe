@@ -63,7 +63,7 @@ class operation:
         response = requests.request("GET", url, headers=self.headers, data=payload, files=self.files)
         dict_response = json.loads(response.text)
 
-                if dict_response.__contains__('moves'):
+        if dict_response.__contains__('moves'):
             moveIds = []
             teamIds = []
             symbols = []
@@ -94,6 +94,7 @@ class operation:
         dict_response = json.loads(response.text)
         return dict_response
 
+
     def get_board_map(self, gameId):
         url = 'https://www.notexponential.com/aip2pgaming/api/index.php?type=boardMap&gameId={}'.format(gameId)
         payload = {}
@@ -101,10 +102,15 @@ class operation:
         response = requests.request("GET", url, headers=self.headers, data=payload, files=self.files)
         dict_response = json.loads(response.text)
 
+        loc = []
+        values = []
+        if dict_response['output'] == None:
+            return loc, values
+
         output = dict_response['output'].split('"')
-        #print(output)
-        keys = [] # loaction [x,y]
-        values = [] # 1 or 2 or 0
+
+        keys = []
+
         for i in range(int((len(output) - 1) / 4)):
             keys.append(output[i * 4 + 1])
             if output[i * 4 + 3] == 'O':
@@ -112,7 +118,6 @@ class operation:
             else:
                 values.append(2)
 
-        loc = []
         for i in range(len(keys)):
             loc.append(keys[i].split(','))
             loc[i][0] = int(loc[i][0])
@@ -120,6 +125,5 @@ class operation:
 
         values = np.asarray(values)
         loc = np.asarray(loc)
-
 
         return loc, values
