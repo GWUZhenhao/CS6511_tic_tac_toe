@@ -35,6 +35,20 @@ class operation:
         dict_response = json.loads(response.text)
         return dict_response
 
+    # def create_a_game(self, opponent, boardsize, target):
+    #     url = 'https://www.notexponential.com/aip2pgaming/api/index.php'
+    #     payload = {
+    #         'type': 'game',
+    #         'teamId1': self.teamId,
+    #         'teamId2': opponent,
+    #         'gameType': 'TTT',
+    #         "boardsize": ""
+    #     }
+    #
+    #     response = requests.request("POST", url, headers=self.headers, data=payload, files=self.files)
+    #     dict_response = json.loads(response.text)
+    #     return dict_response
+    #
     def get_my_games(self):
         url = 'https://www.notexponential.com/aip2pgaming/api/index.php?type=myGames'
         payload = {}

@@ -159,14 +159,14 @@ class Game:
                     # On the empty field player 2 makes a move and calls Min
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 2
-                    print("consider 2 x,y:", i, j)
+                    #print("consider 2 x,y:", i, j)
                     explore_layer += 1
                     if explore_layer >= max_explore_layer:
                         m = self.evaluation_function(self.current_state)
-                        print("MAXeva: x,y", m, i, j)
+                        # print("MAXeva: x,y", m, i, j)
                     else:
                         (m, min_i, in_j) = self.min_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
-                        print("MAX from minab:", m, i, j)
+                        # print("MAX from minab:", m, i, j)
                     if m > max_V:
                         max_V = m
                         px = i
@@ -211,15 +211,15 @@ class Game:
                     # On the empty field player 1 makes a move and calls Max
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 1
-                    print("consider 1 x,y:", i,j)
+                    # print("consider 1 x,y:", i,j)
                     explore_layer += 1
                     if explore_layer >= max_explore_layer:
                         m = self.evaluation_function(self.current_state)
-                        print("mineva: x,y",m,i,j)
+                        # print("mineva: x,y",m,i,j)
                         # print("m of evalu func", m)
                     else:
                         (m, min_i, in_j) = self.max_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
-                        print("min from maxab:",m,i,j)
+                        # print("min from maxab:",m,i,j)
                         # print("m of max:",m)
                     if m < min_V:
                         min_V = m
@@ -343,14 +343,14 @@ class Game:
             if self.player_turn == 1:
                 # TODO: The player 1 will play
 
-                (m, qx, qy) = self.min_alpha_beta(-a-1, a+1, 0, 2)
+                (m, qx, qy) = self.min_alpha_beta(-a-1, a+1, 0, 10000)
                 print('Recommended move: X = {}, Y = {}'.format(qx+1, qy+1))
                 return qx+1,qy+1
                 self.player_turn = 2
 
             else:
 
-                (m, px, py) = self.max_alpha_beta(-a-1, a+1, 0, 2)
+                (m, px, py) = self.max_alpha_beta(-a-1, a+1, 0, 10000)
                 print('Recommended move: X = {}, Y = {}'.format(px+1, py+1))
                 return px+1,py+1
                 self.current_state[px][py] = 2

@@ -2,23 +2,25 @@ import time
 
 import numpy as np
 from unittest import TestCase
-import utils as ut
+from Tic_Tac_Toe import tic_tac_toe
 import operation as op
 
 class TTT_run():
 
     def __init__(self, board_size=12, target=6):
-        self.game = ut.Game(board_size, target)
+        self.game = tic_tac_toe(board_size, target)
         self.gameId = 0  #  gameid 3657 zhenhao tianheng2
         self.teamId = 0  #  zhenhao  tianheng2 1336
         self.op = 0
         self.board_size = board_size
         self.target = target
+        self.board = [[0 for i in range(board_size)] for j in range(board_size)]
 
     def get_state_board(self): # use board map to get state in narray
         key, value = self.op.get_board_map(self.gameId)
+        self.board = [[0 for i in range(self.board_size)] for j in range(self.board_size)]
         for i, point in enumerate(key):
-            self.game.current_state[point[0]-1][point[1]-1] = value[i]
+            self.board[point[0]][point[1]] = value[i]
 
     def first_step(self):
         a = int(self.board_size / 2)
@@ -34,15 +36,11 @@ class TTT_run():
             #print("teamid:",teamIds)
             return False
         else:
-            if symbols[0] == "X":
-                self.game.player_turn = 1
-            else:
-                self.game.player_turn = 2
             return True
 
     def make_decision(self): #find best move in current state
-        #self.game.player_turn = 1
-        x,y = self.game.play_alpha_beta()
+        turn = 1
+        x,y = self.game.search(self.board ,turn)
         return x,y
 
     def make_a_move(self,x,y):
@@ -71,7 +69,7 @@ class TTT_run():
 #
 run = TTT_run()
 run.teamId = '1336'  #1304
-run.gameId = '3679'
+run.gameId = '3682'
 run.op = op.operation("1336")
 while True:
     if run.get_turn():
@@ -79,10 +77,12 @@ while True:
         print("start thinking")
         run.get_state_board()
         x,y = run.make_decision()
-        result=run.make_a_move(x,y)
+        print(x,y)
+        result = run.make_a_move(x,y)
         print("result",result)
         print('\n\nThe calculate time is {}'.format(time.time() - st))
-        print(run.game.current_state)
+        for i in run.board:
+            print(i)
         time.sleep(1)
     else:
         print("it is not team turn")

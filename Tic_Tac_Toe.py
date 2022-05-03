@@ -2,13 +2,14 @@
 player1 = 1
 player2 = 2
 
-max_depth = 5
-max_node = 20
+max_depth = 3
+max_node = 5
 
-num = 10
+'''
 six = 9
 five = 8
 s_five = 7
+'''
 four = 6
 s_four = 5
 three = 4
@@ -16,20 +17,37 @@ s_three = 3
 two = 2
 s_two = 1
 
+
+tar = 5
+lst = []
+
 score_6 = 500000
 socre_5, s_five, socre_4, socre_s_4 = 100000, 50000, 10000, 1000
-socre_3, socre_s_3, socre_2, socre_s_2 = 100, 10, 8, 2
+socre_3, socre_s_3, socre_2, socre_s_2 = 100, 50, 10, 5
+
 
 class tic_tac_toe():
     def __init__(self, n, m):
         self.len = n
         self.target = m
         self.record = [[[0, 0, 0, 0] for i in range(self.len)] for y in range(self.len)]
-        self.count = [[0 for i in range(num)] for i in range(2)]
+        self.count = [[0 for i in range(2*self.target-2)] for i in range(2)]
+        self.dic2 = {}
+        self.score = {}
+        for i in range(2,m):
+
+            self.dic2[2 * i - 3] = 's_' + str(i)
+            self.dic2[2 * i - 2] = str(i)
+
+            self.score['s_' + str(i)] = 10**(i-2)*5
+            self.score[str(i)] = 10**(i-2)*10
+        self.dic2[2 * m - 3] = str(m)
+        self.score[str(m)] = 10 ** (m - 2) * 10
+        self.score[str(m-1)] *= 5
 
     def reset(self):
         self.record = [[[0, 0, 0, 0] for i in range(self.len)] for y in range(self.len)]
-        self.count = [[0 for i in range(num)] for i in range(2)]
+        self.count = [[0 for i in range(2*self.target-2)] for i in range(2)]
 
     def check_win(self, board, turn):
         self.reset()
@@ -47,11 +65,11 @@ class tic_tac_toe():
                 elif board[y][x] == opponent:
                     self.evaluate_one(board, x, y, opponent, ai)
         ai_count = self.count[ai - 1]
-        return ai_count[self.target*2-2] > 0
+        return ai_count[-1] > 0
 
     def evaluate_score(self, board, x, y, ai, opponent):  
 
-        self.count = [[0 for i in range(num)] for i in range(2)]
+        self.count = [[0 for i in range(2*self.target-2)] for i in range(2)]
 
         board[y][x] = ai
         self.evaluate_one(board, x, y, ai, opponent, self.count[ai - 1])
@@ -126,12 +144,12 @@ class tic_tac_toe():
 
     def alpha_beta(self, board, turn, depth, alpha = -2**31, beta=2**31-1):
         score = self.evaluate(board, turn)
-        if depth <= 0 or abs(score) >= socre_5:
+        if depth <= 0 or abs(score) >= self.score[self.dic2[2*self.target-3]]:
             return score
 
         moves = self.heuristic(board, turn)
+        print(moves)
         choice = None
-        self.alpha += len(moves)
 
         if len(moves) == 0:
             return score
@@ -147,11 +165,10 @@ class tic_tac_toe():
             score = - self.alpha_beta(board, op_turn, depth - 1, -beta, -alpha)
 
             board[y][x] = 0
-            self.belta += 1
 
             if score > alpha:
                 alpha = score
-                choice = (x, y)
+                choice = (y, x)
                 if alpha >= beta:
                     break
 
@@ -161,39 +178,18 @@ class tic_tac_toe():
         return alpha
 
     def search(self, board, turn):
-        self.alpha = 0
-        self.belta = 0
         self.choice = (0,0)
         self.alpha_beta(board, turn, max_depth)
         return self.choice
 
     def get_score(self, count):
+
         score = 0
-        if count[five] > 0:
-            return socre_5
-
-        if count[four] > 0:
-            return socre_4
-
-        if count[s_four] > 1:
-            score += count[s_four] * socre_s_4
-        elif count[s_four] > 0 and count[three] > 0:
-            score += count[s_four] * socre_s_4
-        elif count[s_four] > 0:
-            score += socre_3
-
-        if count[three] > 1:
-            score += 5 * socre_3
-        elif count[three] > 0:
-            score += socre_3
-
-        if count[s_three] > 0:
-            score += count[s_three] * socre_s_3
-        if count[two] > 0:
-            score += count[two] * socre_2
-        if count[s_two] > 0:
-            score += count[s_two] * socre_s_2
-
+        #print(count)
+        for i in range(len(count)):
+            if i in self.dic2:
+                score += count[i] * self.score[str(self.dic2[i])]
+        #print(score)
         return score
 
     def evaluate(self, board, turn):
@@ -230,8 +226,8 @@ class tic_tac_toe():
                 self.board_type(board, x, y, i, direction[i], ai, opponent, count)
 
     def set_record(self, x, y, left, right, dir_index, direction):
-        x += (-5 + left) * direction[0]
-        y += (-5 + left) * direction[1]
+        x += (-self.target + left) * direction[0]
+        y += (-self.target + left) * direction[1]
         for i in range(left, right + 1):
             x += direction[0]
             y += direction[1]
@@ -239,11 +235,11 @@ class tic_tac_toe():
 
     def board_type(self, board, x, y, dir_index, dir, ai, opponent, count):
 
-        left, right = 4, 4
+        left, right = self.target-1, self.target-1
         line = [0 for i in range(self.target*2-1)]
 
-        xx = x + (-5 * dir[0])
-        yy = y + (-5 * dir[1])
+        xx = x + (-self.target * dir[0])
+        yy = y + (-self.target * dir[1])
         for i in range(self.target*2-1):
             xx += dir[0]
             yy += dir[1]
@@ -253,7 +249,7 @@ class tic_tac_toe():
             else:
                 line[i] = board[yy][xx]
 
-        while right < 8:
+        while right < self.target * 2 -2:
             if line[right + 1] != ai:
                 break
             right += 1
@@ -263,7 +259,7 @@ class tic_tac_toe():
             left -= 1
 
         left_range, right_range = left, right
-        while right_range < 8:
+        while right_range < self.target * 2 -2:
             if line[right_range + 1] == opponent:
                 break
             right_range += 1
@@ -273,7 +269,7 @@ class tic_tac_toe():
             left_range -= 1
 
         chess_range = right_range - left_range + 1
-        if chess_range < 5:
+        if chess_range < self.target:
             self.set_record(x, y, left_range, right_range, dir_index, dir)
             return 0
 
@@ -281,8 +277,23 @@ class tic_tac_toe():
 
         m_range = right - left + 1
 
-        if m_range >= 5:
-            count[five] += 1
+        if m_range >= self.target:
+            count[-1] += 1
+
+        if m_range > 4:
+            for i in range(self.target-1, 4, -1):
+                if m_range == i:
+                    left_empty = right_empty = False
+                    if line[left - 1] == 0:
+                        left_empty = True
+                    if line[right + 1] == 0:
+                        right_empty = True
+                    if left_empty and right_empty:
+                        count[2*i-2] += 1
+                    elif left_empty or right_empty:
+                        count[2*i-3] += 1
+                   # print(i,count)
+
 
         if m_range == 4:
             left_empty = right_empty = False
@@ -385,3 +396,4 @@ class tic_tac_toe():
                 elif line[right + 2] == 0:
                     if line[right + 3] == ai and line[right + 4] == 0:
                         count[two] += 1
+
