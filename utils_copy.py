@@ -69,17 +69,6 @@ class Game:
         self.player_turn = 1
         self.target = target
 
-    def neighbor(self, board, x, y, r):
-        start_x, end_x = (x - r), (x + r)
-        start_y, end_y = (y - r), (y + r)
-
-        for i in range(start_y, end_y + 1):
-            for j in range(start_x, end_x + 1):
-                if i >= 0 and i < self.board_size and j >= 0 and j < self.board_size:
-                    if board[i][j] != 0:
-                        return True
-        return False
-
     def draw_board(self):
         print(self.current_state)
 
@@ -91,82 +80,37 @@ class Game:
 
     # Checks if the game has ended and returns the winner in each case
     def is_end(self):
-        # Vertical win
-        for i in range(self.board_size):
-            for j in range(self.board_size - self.target + 1):
-                for k in range(self.target - 2):
-                    if (self.current_state[j + k][i] == 0 or self.current_state[j + k][i] != self.current_state[j + k + 1][i]):
-                        break
-                    elif k == (self.target - 2):
-                        return self.current_state[j][i]
-
-        # Horizontal win
-        for i in range(self.board_size):
-            for j in range(self.board_size - self.target + 1):
-                for k in range(self.target - 2):
-                    if (self.current_state[i][j + k] == 0 or self.current_state[i][j + k] != self.current_state[i][j + k + 1]):
-                        break
-                    elif k == (j + self.target - 2):
-                        return self.current_state[i][j]
-
-        # Main diagonal win
-        for i in range(self.board_size - self.target + 1):
-            for j in range(self.board_size - self.target + 1):
-                for k in range(self.target - 2):
-                    if (self.current_state[i + k][j + k] == 0 or self.current_state[i + k][j + k] != self.current_state[i + k + 1][j + k + 1]):
-                        break
-                    elif k == (self.target - 2):
-                        return self.current_state[i][j]
-
-        # Second diagonal win
-        for i in range(self.board_size - self.target + 1):
-            for j in range(self.target - 1, self.board_size):
-                for k in range(self.target - 2):
-                    if (self.current_state[i + k][j -k] == 0 or self.current_state[i + k][j - k] != self.current_state[i + k + 1][j - k - 1]):
-                        break
-                    elif k == (self.target - 2):
-                        return self.current_state[i][j]
-
+        # TODO: Check the game is end or not.
         # if the game is not end, return None
         return None
 
-    def max_alpha_beta(self, alpha, beta, explore_layer, max_explore_layer):
+    def max_alpha_beta(self, alpha, beta):
         # Possible values for maxv are:
         # -10 - loss
         # 0  - a tie
         # 10  - win
 
         # Initialize max_V as -11 worse than the worse case
-        # a = pow(10, 10)
-        a = 10
-        ##max_V = -11
-        max_V = -a-1
+        max_V = -11
         px = None
         py = None
 
         result = self.is_end()
 
         if result == 1:
-            return (-a, 0, 0)
+            return (-10, 0, 0)
         elif result == 2:
-            return (a, 0, 0)
+            return (10, 0, 0)
         elif result == 0:
             return (0, 0, 0)
 
         for i in range(self.board_size):
             for j in range(self.board_size):
-                if self.current_state[i][j] == 0 and self.neighbor(self.current_state,i,j,1):
+                if self.current_state[i][j] == 0:
                     # On the empty field player 2 makes a move and calls Min
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 2
-                    print("consider 2 x,y:", i, j)
-                    explore_layer += 1
-                    if explore_layer >= max_explore_layer:
-                        m = self.evaluation_function(self.current_state)
-                        print("MAXeva: x,y", m, i, j)
-                    else:
-                        (m, min_i, in_j) = self.min_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
-                        print("MAX from minab:", m, i, j)
+                    (m, min_i, in_j) = self.min_alpha_beta(alpha, beta)
                     if m > max_V:
                         max_V = m
                         px = i
@@ -185,13 +129,10 @@ class Game:
 
         return (max_V, px, py)
 
-    def min_alpha_beta(self, alpha, beta, explore_layer,max_explore_layer):
+    def min_alpha_beta(self, alpha, beta):
 
         # Initialize min_V as 11 better than the better case
-        # a = pow(10, 10)
-        a = 10
-        #min_V = 11
-        min_V = a+1
+        min_V = 11
 
         qx = None
         qy = None
@@ -199,45 +140,33 @@ class Game:
         result = self.is_end()
 
         if result == 1:
-            return (-a, 0, 0)
+            return (-10, 0, 0)
         elif result == 2:
-            return (a, 0, 0)
+            return (10, 0, 0)
         elif result == 0:
             return (0, 0, 0)
 
         for i in range(self.board_size):
             for j in range(self.board_size):
-                if self.current_state[i][j] == 0 and self.neighbor(self.current_state,i,j,1):
+                if self.current_state[i][j] == 0:
                     # On the empty field player 1 makes a move and calls Max
                     # That's one branch of the game tree.
                     self.current_state[i][j] = 1
-                    print("consider 1 x,y:", i,j)
-                    explore_layer += 1
-                    if explore_layer >= max_explore_layer:
-                        m = self.evaluation_function(self.current_state)
-                        print("mineva: x,y",m,i,j)
-                        # print("m of evalu func", m)
-                    else:
-                        (m, min_i, in_j) = self.max_alpha_beta(alpha, beta, explore_layer, max_explore_layer)
-                        print("min from maxab:",m,i,j)
-                        # print("m of max:",m)
+                    (m, max_i, max_j) = self.max_alpha_beta(alpha, beta)
                     if m < min_V:
                         min_V = m
                         qx = i
                         qy = j
-                        # print("m<minv:m ,i,j", m,i,j)
 
                     # Setting back the field to empty
                     self.current_state[i][j] = 0
 
                     # if min_V is smaller than current alpha, we can prune. (No need check more children node)
                     if min_V <= alpha:
-                        # print("m<=alpha")
                         return (min_V, qx, qy)
 
                     # if min_V is smaller than current beta, update the beta value
                     if min_V < beta:
-                        # print("minv<=beta",min_V)
                         beta = min_V
 
         return (min_V, qx, qy)
@@ -321,9 +250,7 @@ class Game:
         score_1 = np.sum([num * pow(10, index) for index, num in enumerate(nums_chain_1)])
         score_2 = np.sum([num * pow(10, index) for index, num in enumerate(nums_chain_2)])
         #
-        final_score = (score_1 - score_2)/(score_1 + score_2) *10
-        # final_score = score_1 -score_2
-        return final_score
+        return score_1 - score_2
 
     def play_alpha_beta(self):
         while True:
@@ -338,21 +265,16 @@ class Game:
                     print("It's a tie!")
 
                 return
-            a = 10
-            # a = pow(10,10)
+
             if self.player_turn == 1:
                 # TODO: The player 1 will play
+                (m, qx, qy) = self.min_alpha_beta(-11, 11)
+                print('Recommended move: X = {}, Y = {}'.format(qx, qy))
 
-                (m, qx, qy) = self.min_alpha_beta(-a-1, a+1, 0, 2)
-                print('Recommended move: X = {}, Y = {}'.format(qx+1, qy+1))
-                return qx+1,qy+1
                 self.player_turn = 2
 
             else:
-
-                (m, px, py) = self.max_alpha_beta(-a-1, a+1, 0, 2)
-                print('Recommended move: X = {}, Y = {}'.format(px+1, py+1))
-                return px+1,py+1
+                (m, px, py) = self.max_alpha_beta(-11, 11)
                 self.current_state[px][py] = 2
                 self.player_turn = 1
 

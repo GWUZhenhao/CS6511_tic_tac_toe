@@ -18,7 +18,7 @@ class TTT_run():
     def get_state_board(self): # use board map to get state in narray
         key, value = self.op.get_board_map(self.gameId)
         for i, point in enumerate(key):
-            self.game.current_state[point[0]][point[1]] = value[i]
+            self.game.current_state[point[0]-1][point[1]-1] = value[i]
 
     def first_step(self):
         a = int(self.board_size / 2)
@@ -34,10 +34,14 @@ class TTT_run():
             #print("teamid:",teamIds)
             return False
         else:
+            if symbols[0] == "X":
+                self.game.player_turn = 1
+            else:
+                self.game.player_turn = 2
             return True
 
     def make_decision(self): #find best move in current state
-        self.game.player_turn = 1
+        #self.game.player_turn = 1
         x,y = self.game.play_alpha_beta()
         return x,y
 
@@ -67,7 +71,7 @@ class TTT_run():
 #
 run = TTT_run()
 run.teamId = '1336'  #1304
-run.gameId = '3664'
+run.gameId = '3679'
 run.op = op.operation("1336")
 while True:
     if run.get_turn():
