@@ -2,8 +2,8 @@
 player1 = 1
 player2 = 2
 
-max_depth = 3
-max_node = 5
+max_depth = 5
+max_node = 20
 
 '''
 six = 9
@@ -42,8 +42,8 @@ class tic_tac_toe():
             self.score['s_' + str(i)] = 10**(i-2)*5
             self.score[str(i)] = 10**(i-2)*10
         self.dic2[2 * m - 3] = str(m)
-        self.score[str(m)] = 10 ** (m - 2) * 10
-        self.score[str(m-1)] *= 5
+        self.score[str(m)] = 10 ** (m - 2) * 100
+        self.score[str(m-1)] *= 10
 
     def reset(self):
         self.record = [[[0, 0, 0, 0] for i in range(self.len)] for y in range(self.len)]
@@ -143,12 +143,12 @@ class tic_tac_toe():
         return moves
 
     def alpha_beta(self, board, turn, depth, alpha = -2**31, beta=2**31-1):
+
         score = self.evaluate(board, turn)
         if depth <= 0 or abs(score) >= self.score[self.dic2[2*self.target-3]]:
             return score
 
         moves = self.heuristic(board, turn)
-        print(moves)
         choice = None
 
         if len(moves) == 0:
@@ -168,7 +168,7 @@ class tic_tac_toe():
 
             if score > alpha:
                 alpha = score
-                choice = (y, x)
+                choice = (x, y)
                 if alpha >= beta:
                     break
 
@@ -178,8 +178,18 @@ class tic_tac_toe():
         return alpha
 
     def search(self, board, turn):
+       
+        res = []
+        for i in range(len(board)):
+            temp = []
+            for j in range(len(board)):
+                temp.append(board[j][i])
+            res.append(temp)
+        board = res
+        
         self.choice = (0,0)
         self.alpha_beta(board, turn, max_depth)
+        print(self.choice, turn)
         return self.choice
 
     def get_score(self, count):
@@ -259,7 +269,7 @@ class tic_tac_toe():
             left -= 1
 
         left_range, right_range = left, right
-        while right_range < self.target * 2 -2:
+        while right_range < self.target * 2 - 2:
             if line[right_range + 1] == opponent:
                 break
             right_range += 1
